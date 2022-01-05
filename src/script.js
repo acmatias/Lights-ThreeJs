@@ -66,7 +66,7 @@ const directionalLight = new THREE.DirectionalLight(parameters.sunLightColor, 0.
 directionalLight.position.set(1, 0.25, 0);
 scene.add(directionalLight);
 
-const dLGuiFolder = gui.addFolder('Directional light');
+const dLGuiFolder = gui.addFolder('Sun light');
 dLGuiFolder.addColor(parameters, 'sunLightColor').onChange(() => {
     directionalLight.color.set(parameters.sunLightColor);
 });
