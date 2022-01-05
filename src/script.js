@@ -119,9 +119,9 @@ ralGuiFolder.add(rectAreaLight, 'intensity').min(0).max(10).step(0.001);
 ralGuiFolder.add(rectAreaLight, 'power').min(0).max(50).step(0.001);
 ralGuiFolder.add(rectAreaLight, 'width').min(0).max(5).step(0.001);
 ralGuiFolder.add(rectAreaLight, 'height').min(0).max(5).step(0.001);
-ralGuiFolder.add(rectAreaLight.position, 'x').min(0).max(5).step(0.001).name('position x');
-ralGuiFolder.add(rectAreaLight.position, 'y').min(0).max(5).step(0.001).name('position y');
-ralGuiFolder.add(rectAreaLight.position, 'z').min(0).max(5).step(0.001).name('position z');
+ralGuiFolder.add(rectAreaLight.position, 'x').min(-5).max(5).step(0.001).name('position x');
+ralGuiFolder.add(rectAreaLight.position, 'y').min(-5).max(5).step(0.001).name('position y');
+ralGuiFolder.add(rectAreaLight.position, 'z').min(-5).max(5).step(0.001).name('position z');
 ralGuiFolder.add(rectAreaLight, 'visible');
 
 // Spot Light
