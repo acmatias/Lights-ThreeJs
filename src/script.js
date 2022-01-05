@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import GUI from 'lil-gui';
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper';
-
+import gsap from 'gsap';
 /**
  * Base
  */
@@ -32,7 +32,7 @@ window.addEventListener('keypress', (e) => {
     }
 });
 
-const parameters = {
+let parameters = {
     color: 0xff0000,
     sunLightColor: 0x00fffc,
     groundColor: 0x0000ff,
@@ -42,7 +42,17 @@ const parameters = {
     // spin: () => {
     //     gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI * 2 });
     // },
+    day: () => {
+        gsap.to(directionalLight.position, { duration: 10, x: -10 });
+    },
+    reset: () => {
+        gsap.to(directionalLight.position, { duration: 5, x: 10 });
+    },
+    sunToggle: false,
 };
+
+gui.add(parameters, 'day');
+gui.add(parameters, 'reset');
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
@@ -56,14 +66,17 @@ const scene = new THREE.Scene();
 
 // Omnidirectional Light effect
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+ambientLight.visible = parameters.sunToggle;
 scene.add(ambientLight);
 
-gui.add(ambientLight, 'intensity').min(0).max(1).step(0.001).name('Ambient Light');
-gui.add(ambientLight, 'visible');
+const ablGuiFolder = gui.addFolder('Ambient Light');
+ablGuiFolder.add(ambientLight, 'intensity').min(0).max(1).step(0.001).name('Ambient Light');
+ablGuiFolder.add(ambientLight, 'visible');
 
 // Sun light effect
-const directionalLight = new THREE.DirectionalLight(parameters.sunLightColor, 0.3);
-directionalLight.position.set(1, 0.25, 0);
+const directionalLight = new THREE.DirectionalLight(parameters.sunLightColor, 1);
+directionalLight.position.set(10, 5, 0);
+directionalLight.visible = !parameters.sunToggle;
 scene.add(directionalLight);
 
 const dLGuiFolder = gui.addFolder('Sun light');
@@ -71,14 +84,15 @@ dLGuiFolder.addColor(parameters, 'sunLightColor').onChange(() => {
     directionalLight.color.set(parameters.sunLightColor);
 });
 dLGuiFolder.add(directionalLight, 'intensity').min(0).max(1).step(0.001).name('Intensity');
-dLGuiFolder.add(directionalLight.position, 'x').min(0).max(5).step(0.001).name('position x');
-dLGuiFolder.add(directionalLight.position, 'y').min(0).max(5).step(0.001).name('position y');
-dLGuiFolder.add(directionalLight.position, 'z').min(0).max(5).step(0.001).name('position z');
+dLGuiFolder.add(directionalLight.position, 'x').min(-10).max(10).step(0.001).name('position x');
+dLGuiFolder.add(directionalLight.position, 'y').min(-10).max(10).step(0.001).name('position y');
+dLGuiFolder.add(directionalLight.position, 'z').min(-10).max(10).step(0.001).name('position z');
 
 dLGuiFolder.add(directionalLight, 'visible');
 
 // Sky and Ground color combination
 const hemisphereLight = new THREE.HemisphereLight(parameters.color, parameters.groundColor, 0.3);
+hemisphereLight.visible = parameters.sunToggle;
 scene.add(hemisphereLight);
 
 const hslGuiFolder = gui.addFolder('Hemishepe light');
@@ -93,9 +107,9 @@ hslGuiFolder.add(hemisphereLight, 'visible');
 // One Directional Light
 const pointLight = new THREE.PointLight(parameters.pointColor, 0.5, 1);
 pointLight.position.set(1, -0.5, 1);
+pointLight.visible = parameters.sunToggle;
 scene.add(pointLight);
 
-console.log(scene.remove);
 const plGuiFolder = gui.addFolder('Point Light');
 plGuiFolder.addColor(parameters, 'pointColor').onChange(() => {
     pointLight.color.set(parameters.pointColor);
@@ -109,6 +123,7 @@ plGuiFolder.add(pointLight, 'visible');
 
 // Rectangle Light
 const rectAreaLight = new THREE.RectAreaLight(parameters.rectAreaColor, 2, 3, 1);
+rectAreaLight.visible = parameters.sunToggle;
 scene.add(rectAreaLight);
 
 const ralGuiFolder = gui.addFolder('RectArea Light');
@@ -127,6 +142,7 @@ ralGuiFolder.add(rectAreaLight, 'visible');
 // Spot Light
 const spotLight = new THREE.SpotLight(parameters.spotLightColor, 0.5, 10, Math.PI * 0.1, 0.25, 1);
 spotLight.position.set(0, 2, 3);
+spotLight.visible = parameters.sunToggle;
 // spotLight.target.position.set(0.75, 0, 0);
 scene.add(spotLight, spotLight.target);
 
@@ -164,6 +180,14 @@ scene.add(rectAreaLightHelper);
 
 const spotLightHelper = new THREE.SpotLightHelper(spotLight, 0.2);
 scene.add(spotLightHelper);
+
+gui.add(parameters, 'sunToggle').onChange(() => {
+    ambientLight.visible = parameters.sunToggle;
+    hemisphereLight.visible = parameters.sunToggle;
+    pointLight.visible = parameters.sunToggle;
+    rectAreaLight.visible = parameters.sunToggle;
+    spotLight.visible = parameters.sunToggle;
+});
 
 window.requestAnimationFrame(() => {
     spotLightHelper.update();
