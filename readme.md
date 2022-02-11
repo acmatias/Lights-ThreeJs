@@ -1,6 +1,6 @@
 # Three.js Journey
 
-Demo : https://threejs-light.vercel.app/
+Demo : [demo](https://threejs-light.vercel.app/).
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
