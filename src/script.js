@@ -61,13 +61,16 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+// Loader
+const gltfLoader = new GLTFLoader()
+
 /**
  * Lights
  */
 
 // Omnidirectional Light effect
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
-ambientLight.visible = parameters.sunToggle
+ambientLight.visible = true
 scene.add(ambientLight)
 
 const ablGuiFolder = gui.addFolder('Ambient Light')
@@ -209,23 +212,22 @@ spGuiFolder.add(spotLightHelper, 'visible').name('helper')
  * Objects
  */
 // Material
+
+gltfLoader.load('/models/mandalorian.glb', (gltf) => {
+    gltf.scene.position.set(0, -0.665, 0)
+    scene.add(gltf.scene)
+})
+
 const material = new THREE.MeshStandardMaterial()
 material.roughness = 0.4
 
 // Objects
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), material)
-sphere.position.x = -1.5
-
-const cube = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 0.75), material)
-
-const torus = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.2, 32, 64), material)
-torus.position.x = 1.5
 
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material)
 plane.rotation.x = -Math.PI * 0.5
 plane.position.y = -0.65
 
-scene.add(sphere, cube, torus, plane)
+scene.add(plane)
 gui.add(material, 'roughness').min(0).max(1).step(0.001)
 
 /**
@@ -281,14 +283,14 @@ const clock = new THREE.Clock()
 const tick = () => {
     const elapsedTime = clock.getElapsedTime()
 
-    // Update objects
-    sphere.rotation.y = 0.1 * elapsedTime
-    cube.rotation.y = 0.1 * elapsedTime
-    torus.rotation.y = 0.1 * elapsedTime
+    // // Update objects
+    // sphere.rotation.y = 0.1 * elapsedTime
+    // cube.rotation.y = 0.1 * elapsedTime
+    // torus.rotation.y = 0.1 * elapsedTime
 
-    sphere.rotation.x = 0.15 * elapsedTime
-    cube.rotation.x = 0.15 * elapsedTime
-    torus.rotation.x = 0.15 * elapsedTime
+    // sphere.rotation.x = 0.15 * elapsedTime
+    // cube.rotation.x = 0.15 * elapsedTime
+    // torus.rotation.x = 0.15 * elapsedTime
 
     // Update controls
     controls.update()
